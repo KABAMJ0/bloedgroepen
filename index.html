@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologie Havo 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#1a1a1a;--card:#252525;--card2:#2e2e2e;--text:#fff;--muted:#888;--red:#ff3b30;--border:#3a3a3a;--correct:#22c55e;--wrong:#ef4444}
+.light{--bg:#f2f2f7;--card:#fff;--card2:#e8e8ed;--text:#1c1c1e;--muted:#6e6e73;--border:#d1d1d6;--correct:#16a34a;--wrong:#dc2626}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+.app{max-width:480px;margin:0 auto;padding:0 0 40px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0}
+.logo{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.logo span{color:var(--red)}
+.header-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.hbtn{background:var(--card2);border:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;transition:background .2s}
+.hbtn:hover{background:var(--border)}
+.hbtn.active{background:var(--red);color:#fff}
+.progress-wrap{padding:16px 20px 0}
+.progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prog-text{font-size:14px;color:var(--muted);font-weight:600}
+.pts-badge{background:var(--red);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--red);border-radius:3px;transition:width .4s ease}
+.thema-badge{display:inline-block;background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:8px;margin:12px 20px 0;text-transform:uppercase}
+.quiz-card{margin:10px 20px 0;background:var(--card);border-radius:20px;padding:20px;border:1px solid var(--border)}
+.vraag-label{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.vraag-text{font-size:17px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.vraag-text strong{color:var(--red)}
+.answers{display:flex;flex-direction:column;gap:10px;margin:14px 20px 0}
+.ans-btn{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;padding:15px 18px;border-radius:14px;cursor:pointer;text-align:left;transition:background .15s,border-color .15s,transform .1s;line-height:1.4}
+.ans-btn:hover:not(:disabled){background:var(--card2);border-color:var(--muted);transform:scale(1.01)}
+.ans-btn.correct{background:#16a34a22;border-color:var(--correct);color:var(--correct)}
+.ans-btn.wrong{background:#dc262622;border-color:var(--wrong);color:var(--wrong)}
+.ans-btn:disabled{cursor:default}
+.feedback{margin:12px 20px 0;padding:14px 18px;border-radius:14px;font-size:14px;font-weight:600;line-height:1.5;display:none}
+.feedback.correct{background:#16a34a22;color:var(--correct);border:1px solid #16a34a44;display:block}
+.feedback.wrong{background:#dc262622;color:var(--wrong);border:1px solid #dc262244;display:block}
+.next-btn{display:none;margin:12px 20px 0;width:calc(100% - 40px);background:var(--red);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+.score-screen{display:none;text-align:center;padding:40px 20px}
+.score-circle{width:120px;height:120px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;flex-direction:column}
+.score-num{font-size:36px;font-weight:800;color:#fff}
+.score-sub{font-size:12px;color:#ffaaaa;font-weight:600}
+.score-title{font-size:24px;font-weight:800;margin-bottom:8px}
+.score-desc{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.restart-btn{background:var(--red);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;padding:15px 32px;border-radius:14px;cursor:pointer;margin:6px}
+.home-btn{background:var(--card2);color:var(--text);border:none;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;padding:15px 32px;border-radius:14px;cursor:pointer;margin:6px}
+.home-screen{padding:20px}
+.home-title{font-size:24px;font-weight:800;margin-bottom:6px}
+.home-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.thema-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thema-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:transform .15s,border-color .15s}
+.thema-card:hover{transform:scale(1.02);border-color:var(--red)}
+.thema-icon{font-size:28px;margin-bottom:8px}
+.thema-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.thema-count{font-size:12px;color:var(--muted)}
+.all-btn{width:100%;background:var(--red);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;margin-bottom:12px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">Biologie <span>Havo 5</span></div>
+    <div class="header-btns">
+      <button class="hbtn" id="themeBtn" onclick="toggleTheme()">Licht</button>
+    </div>
+  </div>
+
+  <!-- Home scherm -->
+  <div id="homeScreen" class="home-screen">
+    <div style="height:12px"></div>
+    <div class="home-title">Kies een thema</div>
+    <div class="home-sub">Of oefen met alle onderwerpen door elkaar</div>
+    <button class="all-btn" onclick="startQuiz('Alles')">🎲 Alle onderwerpen (random)</button>
+    <div class="thema-grid" id="themaGrid"></div>
+  </div>
+
+  <!-- Quiz scherm -->
+  <div id="quizArea" style="display:none">
+    <div class="progress-wrap">
+      <div class="progress-row">
+        <span class="prog-text" id="progText">1 / 10</span>
+        <span class="pts-badge" id="ptsBadge">0 pt</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:10%"></div></div>
+    </div>
+    <div class="thema-badge" id="themaBadge"></div>
+    <div class="quiz-card">
+      <div class="vraag-label">Vraag</div>
+      <div class="vraag-text" id="vraagText"></div>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Volgende →</button>
+  </div>
+
+  <!-- Score scherm -->
+  <div class="score-screen" id="scoreScreen">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-sub">/ 10 pt</div>
+    </div>
+    <div class="score-title" id="scoreTitle"></div>
+    <div class="score-desc" id="scoreDesc"></div>
+    <button class="restart-btn" onclick="restartSame()">Opnieuw →</button>
+    <button class="home-btn" onclick="goHome()">← Thema's</button>
+  </div>
+</div>
+
+<script>
+const VRAGEN = [
+  // ═══════════════════════════════════════════
+  // BLOED & AFWEER
+  // ═══════════════════════════════════════════
+  {thema:"Bloed & Afweer",vraag:"Welke bloedgroep wordt de 'universele donor' genoemd?",opties:["AB+","O+","O−","A−"],correct:2,uitleg:"O− heeft geen A-, B- of rhesus-antigenen en kan daarom aan alle bloedgroepen gegeven worden."},
+  {thema:"Bloed & Afweer",vraag:"Welke bloedgroep kan bloed van alle groepen ontvangen?",opties:["O+","AB+","AB−","A+"],correct:1,uitleg:"AB+ heeft alle antigenen (A, B en rhesus) en maakt dus geen antistoffen aan tegen deze antigenen."},
+  {thema:"Bloed & Afweer",vraag:"Iemand met bloedgroep A heeft in het bloedplasma:",opties:["Anti-A antistoffen","Anti-B antistoffen","Anti-A en anti-B antistoffen","Geen antistoffen"],correct:1,uitleg:"Iemand met bloedgroep A heeft A-antigenen op de rode bloedcellen en anti-B antistoffen in het plasma."},
+  {thema:"Bloed & Afweer",vraag:"Wat is de functie van een macrofaag?",opties:["Antistoffen produceren","Fagocytose en antigeenpresentatie","T-cellen activeren via cytokinen","Geïnfecteerde cellen direct doden"],correct:1,uitleg:"Macrofagen voeren fagocytose uit (pathogenen opslokken) en presenteren antigenen op MHC II aan T-helpercellen."},
+  {thema:"Bloed & Afweer",vraag:"Welk eiwit draagt een T-helpercel op zijn oppervlak waarmee HIV bindt?",opties:["CD8","MHC I","CD4","TCR"],correct:2,uitleg:"HIV bindt aan het CD4-eiwit op T-helpercellen, waardoor het immuunsysteem geleidelijk wordt vernietigd."},
+  {thema:"Bloed & Afweer",vraag:"Wat produceert een plasmacel?",opties:["Cytokinen","Antigenen","Antistoffen","Perforines"],correct:2,uitleg:"Plasmacellen zijn geactiveerde B-cellen die grote hoeveelheden antistoffen (immunoglobulinen) produceren."},
+  {thema:"Bloed & Afweer",vraag:"Welke cel vernietigt direct virusgeïnfecteerde lichaamscellen?",opties:["T-helpercel","B-cel","NK-cel","Cytotoxische T-cel (CD8+)"],correct:3,uitleg:"CD8+ T-cellen herkennen geïnfecteerde cellen via MHC I en doden ze met perforines en granzymen."},
+  {thema:"Bloed & Afweer",vraag:"Wat is het verschil tussen specifieke en aspecifieke afweer?",opties:["Specifieke afweer is sneller","Aspecifieke afweer richt zich op één pathogeen","Specifieke afweer herkent specifieke antigenen; aspecifiek niet","Er is geen verschil"],correct:2,uitleg:"Aspecifieke afweer (huid, fagocyten) werkt tegen alle indringers; specifieke afweer (lymfocyten) richt zich op specifieke antigenen."},
+  {thema:"Bloed & Afweer",vraag:"Wat is een antigeen?",opties:["Een antistof van het immuunsysteem","Een stof die een immuunreactie uitlokt","Een witte bloedcel","Een vaccin"],correct:1,uitleg:"Een antigeen is een molecule (vaak eiwit) op het oppervlak van een pathogeen dat een immuunreactie uitlokt."},
+  {thema:"Bloed & Afweer",vraag:"Hoe werkt een vaccin?",opties:["Het doodt direct alle bacteriën","Het geeft antilichamen direct mee","Het activeert het immuunsysteem zonder ziekte te veroorzaken","Het verhoogt de lichaamstemperatuur"],correct:2,uitleg:"Een vaccin bevat verzwakte/gedode pathogenen of onderdelen ervan. Het immuunsysteem maakt geheugen­cellen aan zonder dat je ziek wordt."},
+  {thema:"Bloed & Afweer",vraag:"Wat is een allergie?",opties:["Een tekort aan antistoffen","Een overdreven immuunreactie op een onschadelijke stof","Een auto-immuunziekte","Een infectie met een allergeen"],correct:1,uitleg:"Bij allergie reageert het immuunsysteem overdreven op onschadelijke stoffen (allergenen) zoals pollen, waardoor histamine vrijkomt."},
+  {thema:"Bloed & Afweer",vraag:"Welk bloedbestanddeel is verantwoordelijk voor bloedstolling?",opties:["Erytrocyten","Leukocyten","Trombocyten","Plasma"],correct:2,uitleg:"Trombocyten (bloedplaatjes) zijn betrokken bij de bloedstolling door een propje te vormen bij een wond."},
+  {thema:"Bloed & Afweer",vraag:"Welke cellen zijn betrokken bij de humorale immuniteit?",opties:["T-killercellen","B-cellen en plasmacellen","NK-cellen","Macrofagen"],correct:1,uitleg:"Humorale immuniteit verloopt via B-cellen die uitrijpen tot plasmacellen en antistoffen produceren die vrij door het bloed circuleren."},
+  {thema:"Bloed & Afweer",vraag:"Wat is het rhesus-factor systeem?",opties:["Een systeem op basis van A/B antigenen","Een antigeen (D) op rode bloedcellen dat positief of negatief kan zijn","Een type witte bloedcel","Een bloed­stollingseiw­it"],correct:1,uitleg:"Het rhesus-systeem is gebaseerd op de aanwezigheid (rh+) of afwezigheid (rh−) van het D-antigeen op rode bloedcellen."},
+  {thema:"Bloed & Afweer",vraag:"Wat is een auto-immuunziekte?",opties:["Een ziekte veroorzaakt door bacteriën","Wanneer het immuunsysteem eigen lichaamscellen aanvalt","Een tekort aan witte bloedcellen","Een allergische reactie"],correct:1,uitleg:"Bij auto-immuunziekten (zoals reuma, MS) herkent het immuunsysteem eigen cellen als vreemd en valt ze aan."},
+  {thema:"Bloed & Afweer",vraag:"Welke stof veroorzaakt koorts bij een infectie?",opties:["Antistoffen","Histamine","Pyrogenen (o.a. interleukine-1)","Adrenaline"],correct:2,uitleg:"Pyrogenen, zoals interleukine-1 (uitgescheiden door macrofagen), verhogen de lichaamstemperatuur via de hypothalamus."},
+  {thema:"Bloed & Afweer",vraag:"Hoe noemen we de immuunreactie waarbij T-cellen direct cellen aanvallen?",opties:["Humorale immuniteit","Cellulaire immuniteit","Aspecifieke afweer","Passieve immuniteit"],correct:1,uitleg:"Cellulaire immuniteit verloopt via T-cellen die direct geïnfecteerde cellen aanvallen, zonder gebruik van antistoffen."},
+  {thema:"Bloed & Afweer",vraag:"Wat zijn geheugen-B-cellen?",opties:["B-cellen die antigenen presenteren","Langlevende B-cellen die bij herinfectie snel reageren","B-cellen in het beenmerg","Plasmacellen zonder functie"],correct:1,uitleg:"Geheugen-B-cellen blijven na een infectie aanwezig. Bij herinfectie reageren ze snel en produceren snel veel antistoffen."},
+  {thema:"Bloed & Afweer",vraag:"Wat is passieve immuniteit?",opties:["Immuniteit door vaccinatie","Immuniteit door het doormaken van een ziekte","Immuniteit door toediening van kant-en-klare antistoffen","Aangeboren immuniteit"],correct:2,uitleg:"Passieve immuniteit is tijdelijk — je krijgt kant-en-klare antistoffen (bijv. via moedermelk of serum), maar maakt zelf geen geheugen­cellen aan."},
+  {thema:"Bloed & Afweer",vraag:"Welke bloedgroep heeft geen A- of B-antigenen op de rode bloedcellen?",opties:["AB","A","B","O"],correct:3,uitleg:"Bloedgroep O heeft geen A- of B-antigenen, maar wel anti-A én anti-B antistoffen in het plasma."},
+
+  // ═══════════════════════════════════════════
+  // DNA & ERFELIJKHEID
+  // ═══════════════════════════════════════════
+  {thema:"DNA & Erfelijkheid",vraag:"Uit welke bouwstenen bestaat DNA?",opties:["Aminozuren","Nucleotiden","Vetzuren","Suikers"],correct:1,uitleg:"DNA bestaat uit nucleotiden, elk opgebouwd uit een fosfaatgroep, het suiker deoxyribose en een stikstofbase."},
+  {thema:"DNA & Erfelijkheid",vraag:"Welke basen vormen een basenpaar in DNA?",opties:["A-G en C-T","A-T en G-C","A-C en G-T","A-U en G-C"],correct:1,uitleg:"In DNA paren adenine (A) met thymine (T) en guanine (G) met cytosine (C) — de complementaire basenparing."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is het verschil tussen DNA en RNA?",opties:["DNA is enkelstrengs, RNA dubbelstrengs","RNA heeft uracil in plaats van thymine en het suiker ribose","DNA heeft ribose, RNA deoxyribose","Geen verschil"],correct:1,uitleg:"RNA heeft het suiker ribose (DNA heeft deoxyribose) en de base uracil (U) in plaats van thymine (T). RNA is ook enkelstrengs."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is transcriptie?",opties:["DNA kopiëren naar DNA","DNA omzetten naar mRNA","mRNA omzetten naar eiwit","Eiwit omzetten naar DNA"],correct:1,uitleg:"Transcriptie is het proces waarbij DNA wordt afgelezen en een complementair mRNA-molecuul wordt gemaakt in de celkern."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is translatie?",opties:["DNA kopiëren","mRNA vertalen naar een eiwitketen","DNA omzetten naar RNA","RNA afbreken"],correct:1,uitleg:"Translatie vindt plaats op ribosomen: het mRNA wordt afgelezen en de codons worden vertaald naar aminozuren die een eiwit vormen."},
+  {thema:"DNA & Erfelijkheid",vraag:"Hoeveel nucleotiden coderen voor één aminozuur?",opties:["1","2","3","4"],correct:2,uitleg:"Een codon bestaat uit 3 nucleotiden (triplet) en codeert voor één aminozuur. Er zijn 64 mogelijke codons voor 20 aminozuren."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een dominant allel?",opties:["Een allel dat altijd recessief is","Een allel waarvan het effect zichtbaar is in heterozygote toestand","Een allel dat alleen bij vrouwen voorkomt","Een allel op het Y-chromosoom"],correct:1,uitleg:"Een dominant allel (aangeduid met hoofdletter) drukt zich altijd uit, ook als er maar één kopie aanwezig is (heterozygoot)."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is het genotype van een homozygoot recessief individu voor eigenschap 'a'?",opties:["Aa","AA","aa","aA"],correct:2,uitleg:"Homozygoot recessief betekent twee recessieve allelen: aa. Het fenotype is dan het recessieve kenmerk."},
+  {thema:"DNA & Erfelijkheid",vraag:"Ouders hebben allebei genotype Aa. Welke verhouding van fenotypen verwacht je bij de nakomelingen?",opties:["1:1","3:1","1:2:1","1:3"],correct:1,uitleg:"Kruising Aa × Aa geeft genotypen AA:Aa:aa = 1:2:1, maar fenotypisch (dominant:recessief) = 3:1."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een mutatie?",opties:["Een verandering in het fenotype","Een permanente verandering in het DNA","Een tijdelijke verandering in eiwit","Een kruising tussen twee soorten"],correct:1,uitleg:"Een mutatie is een permanente verandering in de DNA-volgorde. Dit kan spontaan optreden of worden veroorzaakt door mutagene factoren."},
+  {thema:"DNA & Erfelijkheid",vraag:"Kleurenblindheid is X-gebonden recessief. Een kleurenblinde vader en een draagster moeder. Welk percentage van de zonen is kleurenblind?",opties:["0%","25%","50%","100%"],correct:2,uitleg:"Draagster moeder: X^A X^a. Kleurenblinde vader: X^a Y. Zonen krijgen Y van vader en X^A of X^a van moeder → 50% kleurenblind."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een karyogram?",opties:["Een grafiek van DNA-replicatie","Een geordende opstelling van chromosomen van een cel","Een kaart van genen op een chromosoom","Een diagram van eiwitvorming"],correct:1,uitleg:"Een karyogram is een foto van alle chromosomen van een cel, geordend op grootte en vorm — gebruikt om chromosoomafwijkingen te detecteren."},
+  {thema:"DNA & Erfelijkheid",vraag:"Hoeveel chromosomen heeft een normale menselijke lichaamscel?",opties:["23","46","44","48"],correct:1,uitleg:"Menselijke lichaamscellen (somatische cellen) bevatten 46 chromosomen: 23 paar homologe chromosomen (diploïd)."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is het verschil tussen mitose en meiose?",opties:["Mitose produceert 4 cellen, meiose 2","Meiose produceert geslachtscellen met de helft van het chromosoomaantal; mitose produceert identieke dochtercellen","Mitose vindt alleen in de geslachtsorganen plaats","Er is geen verschil"],correct:1,uitleg:"Mitose: 2 identieke diploïde dochtercellen (groei/herstel). Meiose: 4 haploïde geslachtscellen (gameten) met recombinatie."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een chromosoomafwijking bij Down-syndroom?",opties:["Deletie op chromosoom 21","Trisomie 21 (3× chromosoom 21)","Monosomie X","Inversie op chromosoom 5"],correct:1,uitleg:"Down-syndroom wordt veroorzaakt door trisomie 21 — een extra kopie van chromosoom 21, totaal 47 chromosomen."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is PCR (polymerase-kettingreactie)?",opties:["Een methode om eiwitten te analyseren","Een techniek om kleine hoeveelheden DNA te vermenigvuldigen","Een manier om mutaties te veroorzaken","Een methode voor gentherapie"],correct:1,uitleg:"PCR vermenigvuldigt specifieke DNA-fragmenten exponentieel door herhaaldelijk te denatureren, primerbinding en DNA-synthese."},
+  {thema:"DNA & Erfelijkheid",vraag:"Sikkelcelanemie is een recessieve aandoening. Ouders zijn beide drager (Aa). Kans op aangedaan kind?",opties:["0%","25%","50%","75%"],correct:1,uitleg:"Aa × Aa → 25% AA, 50% Aa, 25% aa. Kans op aangedaan kind (aa) = 25%."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is crossing-over?",opties:["Uitwisseling van chromosoomdelen tijdens meiose","Kopiëren van DNA","Binding van ribosomen aan mRNA","Splitsing van een cel"],correct:0,uitleg:"Crossing-over is de uitwisseling van homologe chromosoomdelen tijdens de eerste deling van meiose, wat genetische variatie vergroot."},
+  {thema:"DNA & Erfelijkheid",vraag:"Welk organel is verantwoordelijk voor de eiwitsynthese (translatie)?",opties:["Mitochondrium","Ribosoom","Golgi-apparaat","Lysosoom"],correct:1,uitleg:"Ribosomen zijn de 'eiwitfabrieken' van de cel. Ze lezen het mRNA af en koppelen aminozuren aaneen tot een polypeptide."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een puntmutatie?",opties:["Verdwijnen van een heel chromosoom","Verandering van één nucleotide in het DNA","Duplicatie van een chromosoomstuk","Inversie van meerdere genen"],correct:1,uitleg:"Een puntmutatie is een verandering van één enkel nucleotide in de DNA-sequentie. Dit kan leiden tot een ander aminozuur (missense) of een stopcodon."},
+  {thema:"DNA & Erfelijkheid",vraag:"Wat is een intron?",opties:["Een coderend deel van het gen","Een niet-coderend deel van het gen dat uit het pre-mRNA wordt geknipt","Een type RNA","Een enzym bij transcriptie"],correct:1,uitleg:"Intronen zijn niet-coderende stukken DNA in een gen. Ze worden wel getranscribeerd maar daarna uit het pre-mRNA verwijderd door splicing."},
+
+  // ═══════════════════════════════════════════
+  // EVOLUTIE
+  // ═══════════════════════════════════════════
+  {thema:"Evolutie",vraag:"Wat is de kern van Darwins theorie van evolutie?",opties:["Individuen die het best zijn aangepast overleven en planten zich voort","Soorten veranderen bewust om te overleven","Grote veranderingen treden plotseling op","Alle soorten zijn tegelijk ontstaan"],correct:0,uitleg:"Darwin's natuurlijke selectie: individuen met voordelige variaties overleven beter, planten zich vaker voort en geven hun kenmerken door."},
+  {thema:"Evolutie",vraag:"Wat is adaptatie?",opties:["Een plotselinge mutatie","Een erfelijke eigenschap die de overlevingskans vergroot","Een vorm van kunstmatige selectie","Een genetische drift"],correct:1,uitleg:"Adaptatie is een erfelijke eigenschap die het individu beter aanpast aan zijn omgeving, waardoor zijn overlevings- en voortplantingskans toeneemt."},
+  {thema:"Evolutie",vraag:"Wat is soortvorming (speciatie)?",opties:["Het uitsterven van een soort","Het ontstaan van een nieuwe soort door reproductieve isolatie","Een mutatie binnen een populatie","Het samensmelten van twee soorten"],correct:1,uitleg:"Speciatie treedt op wanneer populaties van dezelfde soort zo ver van elkaar afwijken (door isolatie) dat ze zich niet meer kunnen voortplanten."},
+  {thema:"Evolutie",vraag:"Welk bewijs voor evolutie bieden homologe organen?",opties:["Ze bewijzen dat soorten dezelfde functie hebben","Ze tonen gemeenschappelijke afstamming aan via gedeelde bouwplan","Ze zijn altijd identiek","Ze komen alleen voor bij reptielen"],correct:1,uitleg:"Homologe organen (bijv. armbeen mens, vleugel vleermuizen) hebben dezelfde basisstructuur maar verschillende functies — wijst op gemeenschappelijke voorouder."},
+  {thema:"Evolutie",vraag:"Wat zijn analoge organen?",opties:["Organen met dezelfde bouw en functie","Organen met dezelfde functie maar andere bouwplan (convergente evolutie)","Organen van hetzelfde dier","Organen zonder functie"],correct:1,uitleg:"Analoge organen (bijv. vleugel vogel en vlindervleugel) hebben dezelfde functie maar zijn onafhankelijk geëvolueerd — convergente evolutie."},
+  {thema:"Evolutie",vraag:"Wat is genetische drift?",opties:["Verandering in allel­frequenties door toeval in kleine populaties","Gerichte selectie op een eigenschap","Migratie van individuen","Kunstmatige selectie door mensen"],correct:0,uitleg:"Genetische drift is toevallige verandering van allel­frequenties, met name merkbaar in kleine populaties (flessenhalsseffect, stichterseffect)."},
+  {thema:"Evolutie",vraag:"Wat toont de moleculaire klok aan?",opties:["De leeftijd van fossielen","Evolutionaire verwantschap op basis van DNA-verschillen en mutatietempo","De snelheid van mutaties bij virussen","De ouderdom van de aarde"],correct:1,uitleg:"De moleculaire klok gebruikt het tempo van DNA-mutaties om te berekenen wanneer twee soorten een gemeenschappelijke voorouder hadden."},
+  {thema:"Evolutie",vraag:"Wat zijn vestigiale organen?",opties:["Organen die extra goed ontwikkeld zijn","Organen die hun functie verloren hebben in de loop van evolutie","Embryonale organen","Organen die alleen bij embryo's voorkomen"],correct:1,uitleg:"Vestigiale organen (bijv. staartbeentje bij mensen, appendix) zijn overblijfselen van organen die bij voorouders nog een functie hadden."},
+  {thema:"Evolutie",vraag:"Wat is coëvolutie?",opties:["Evolutie van één soort","Gelijktijdige evolutie van twee soorten die elkaar beïnvloeden","Snelle evolutie door mutaties","Evolutie door isolatie"],correct:1,uitleg:"Coëvolutie is wanneer twee soorten elkaars evolutie beïnvloeden, zoals bloemen en hun bestuivers (bijv. orchidee en specifieke vlinder)."},
+  {thema:"Evolutie",vraag:"Wat stelt Hardy-Weinberg-evenwicht?",opties:["Allel­frequenties veranderen altijd","Allel­frequenties in een grote populatie blijven constant zonder evolutionaire krachten","Kleine populaties evolueren niet","Dominante allelen worden steeds frequenter"],correct:1,uitleg:"Hardy-Weinberg: in een ideale grote populatie zonder selectie, mutatie, migratie of drift blijven allel­frequenties constant van generatie op generatie."},
+  {thema:"Evolutie",vraag:"Welke factor is GEEN voorwaarde voor Hardy-Weinberg-evenwicht?",opties:["Grote populatie","Random paring","Natuurlijke selectie","Geen mutatie"],correct:2,uitleg:"Hardy-Weinberg-evenwicht vereist afwezigheid van selectie, mutatie, genetische drift en migratie. Aanwezigheid van selectie verstoort het evenwicht."},
+  {thema:"Evolutie",vraag:"Wat is kunstmatige selectie?",opties:["Selectie door roofdieren","Selectie door mensen op gewenste eigenschappen","Selectie door klimaat","Toevallige selectie"],correct:1,uitleg:"Kunstmatige selectie is gerichte selectie door mensen op gewenste kenmerken, zoals bij het fokken van honden of veredelen van gewassen."},
+  {thema:"Evolutie",vraag:"Fossielen in diepere aardlagen zijn over het algemeen:",opties:["Jonger","Ouder","Even oud","Niet te dateren"],correct:1,uitleg:"Diepere aardlagen werden eerder gevormd — fossielen daarin zijn dus ouder (principe van superpositie in stratigrafie)."},
+  {thema:"Evolutie",vraag:"Wat is de 'survival of the fittest'?",opties:["Alleen de sterkste dieren overleven","Individuen met de meest voordelige erfelijke kenmerken voor hun omgeving planten zich het meest voort","Snelle dieren overleven altijd","Grote dieren overleven beter"],correct:1,uitleg:"'Fittest' betekent beste aangepast aan de omgeving — niet perse het sterkste of grootste. Het gaat om reproductief succes."},
+  {thema:"Evolutie",vraag:"Wat is het flessenhalsseffect?",opties:["Een type mutatie","Sterke vermindering van een populatie waardoor allel­frequenties toevallig veranderen","Uitsterven van een soort","Snelle evolutie door selectie"],correct:1,uitleg:"Het flessenhalsseffect treedt op na een ramp die de populatie sterk verkleint. De overlevenden vertegenwoordigen toevallig niet alle allelen van de oorspronkelijke populatie."},
+
+  // ═══════════════════════════════════════════
+  // REGELING & ZENUWSTELSEL
+  // ═══════════════════════════════════════════
+  {thema:"Regeling & Hormonen",vraag:"Wat is homeostase?",opties:["Alle lichaamsfuncties stoppen","Handhaven van een stabiele inwendige omgeving","Versnelling van de stofwisseling","Afsluiting van de nieren"],correct:1,uitleg:"Homeostase is het vermogen van het lichaam om de inwendige omgeving (temperatuur, bloedsuiker, pH, etc.) constant te houden."},
+  {thema:"Regeling & Hormonen",vraag:"Welk hormoon verlaagt de bloedsuikerspiegel?",opties:["Glucagon","Adrenaline","Insuline","Cortisol"],correct:2,uitleg:"Insuline (geproduceerd door bètacellen van de eilandjes van Langerhans in de pancreas) stimuleert cellen om glucose op te nemen, waardoor de bloedsuiker daalt."},
+  {thema:"Regeling & Hormonen",vraag:"Welk hormoon verhoogt de bloedsuikerspiegel?",opties:["Insuline","Glucagon","ADH","Oestrogeen"],correct:1,uitleg:"Glucagon (geproduceerd door alfacellen van de pancreas) stimuleert de lever om glycogeen om te zetten naar glucose (glycogenolyse)."},
+  {thema:"Regeling & Hormonen",vraag:"Wat doet ADH (antidiuretisch hormoon)?",opties:["Verlaagt de bloeddruk","Laat de nieren meer water terugresorderen","Verhoogt de urineproductie","Stimuleert de pancreas"],correct:1,uitleg:"ADH wordt afgegeven door de hypofyse en zorgt ervoor dat de nieren meer water terugresorb­eren, waardoor de urine geconcentreerder wordt."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is een synaps?",opties:["Een type zenuwcel","De verbinding tussen twee zenuwcellen waar signaloverdracht plaatsvindt","Een type spiercel","Een hormoonreceptor"],correct:1,uitleg:"Een synaps is de verbinding tussen de uitloper van een zenuwcel en de volgende cel. Neurotransmitters worden uitgescheiden in de synaptische spleet."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is een reflex?",opties:["Een bewuste beweging","Een snelle, onbewuste reactie via het ruggenmerg zonder tussenkomst van de hersenen","Een hormoonreactie","Een spiercontractie door wil"],correct:1,uitleg:"Een reflex is een snelle automatische reactie. De impuls gaat via een reflexboog: receptor → sensorisch neuron → ruggenmerg → motorisch neuron → effector."},
+  {thema:"Regeling & Hormonen",vraag:"Welk neurotransmitter is betrokken bij spiercontractie bij de neuromusculaire junctie?",opties:["Dopamine","Serotonine","Acetylcholine","Adrenaline"],correct:2,uitleg:"Acetylcholine is de neurotransmitter bij de neuromusculaire junctie (synaps tussen motorisch neuron en spiercel) en veroorzaakt spiercontractie."},
+  {thema:"Regeling & Hormonen",vraag:"Waar wordt groeihormoon geproduceerd?",opties:["Schildklier","Bijnier","Hypofyse (voorkwab)","Pancreas"],correct:2,uitleg:"Groeihormoon (somatotropine) wordt geproduceerd door de voorkwab van de hypofyse en stimuleert lengtegroei en celvernieuwing."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is negatieve terugkoppeling (feedback)?",opties:["De reactie versterkt zichzelf","Het effect van een hormoon wordt versterkt door meer hormoon","Het eindproduct remt de productie — zorgt voor stabiliteit","Er is geen terugkoppeling"],correct:2,uitleg:"Bij negatieve feedback remt het eindproduct (bijv. hoog glucosegehalte) de productie (bijv. van glucagon). Dit houdt het systeem in balans."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is de functie van adrenaline?",opties:["Verlagen van bloedsuiker","Vecht-of-vluchtreactie: verhoging hartslag, bloeddruk en bloedsuiker","Regulatie van waterbalans","Bevordering van slaap"],correct:1,uitleg:"Adrenaline (epinefrine) bereidt het lichaam voor op stress: hartslag en bloeddruk stijgen, bloedsuiker stijgt, bloedstroom naar spieren neemt toe."},
+  {thema:"Regeling & Hormonen",vraag:"Welk deel van het zenuwstelsel regelt onbewuste processen zoals hartslag en spijsvertering?",opties:["Somatisch zenuwstelsel","Autonoom zenuwstelsel","Centraal zenuwstelsel","Perifeer sensorisch systeem"],correct:1,uitleg:"Het autonome zenuwstelsel (sympathisch en parasympathisch) regelt onbewuste processen. Het sympathisch systeem activeert; het parasympathisch rust en herstel."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is de hypothalamus?",opties:["Een klier in de buik","Een hersengebied dat de hypofyse aanstuurt en homeostase regelt","Een deel van het ruggenmerg","Een type neuron"],correct:1,uitleg:"De hypothalamus is een hersengebied dat de hypofyse aanstuurt via hormonen en releasing-factoren. Het regelt temperatuur, honger, dorst en slaap."},
+  {thema:"Regeling & Hormonen",vraag:"Wat doet oestrogeen in de vrouwelijke cyclus?",opties:["Stimuleert eisprong direct","Zorgt voor opbouw van het baarmoederslijmvlies en stimuleert LH-piek","Remt follikelontwikkeling","Bevordert menstruatie"],correct:1,uitleg:"Oestrogeen (geproduceerd door follikel) zorgt voor opbouw van het baarmoederslijmvlies en triggert bij hoge concentratie een LH-piek die de ovulatie veroorzaakt."},
+  {thema:"Regeling & Hormonen",vraag:"Wat is de rol van het parasympathisch zenuwstelsel?",opties:["Activeren bij stress","Remmen van spijsvertering","Bevorderen van rust en herstel (rest-and-digest)","Verhogen van hartslag"],correct:2,uitleg:"Het parasympathisch zenuwstelsel is actief tijdens rust: het verlaagt hartslag, bevordert spijsvertering en conserveert energie."},
+  {thema:"Regeling & Hormonen",vraag:"Welk hormoon stimuleert de schildklier?",opties:["TSH (schildklierstimulrerend hormoon)","ADH","Insuline","FSH"],correct:0,uitleg:"TSH (thyroïdstimulrerend hormoon) wordt geproduceerd door de hypofyse en stimuleert de schildklier om schildklierhormoon (T3/T4) te produceren."},
+
+  // ═══════════════════════════════════════════
+  // ECOLOGIE
+  // ═══════════════════════════════════════════
+  {thema:"Ecologie",vraag:"Wat is een biotische factor?",opties:["Temperatuur","Neerslag","Aanwezigheid van predatoren","Zoutgehalte van bodem"],correct:2,uitleg:"Biotische factoren zijn levende componenten in een ecosysteem, zoals predatoren, concurrenten, prooien en parasieten."},
+  {thema:"Ecologie",vraag:"Wat is een abiotische factor?",opties:["Bacteriën in de bodem","Roofdieren","Temperatuur en lichtintensiteit","Plantensoorten"],correct:2,uitleg:"Abiotische factoren zijn niet-levende omgevingsfactoren zoals temperatuur, licht, neerslag, pH en bodemtype."},
+  {thema:"Ecologie",vraag:"Wat is een voedselketen?",opties:["Een netwerk van alle voedselrelaties in een ecosysteem","Een lineaire reeks waarbij elke soort de vorige opeet","Een lijst van producenten","Een type symbiose"],correct:1,uitleg:"Een voedselketen toont lineair wie wat eet: producent → herbivoor → carnivoor → toproof­dier. Energie stroomt door van links naar rechts."},
+  {thema:"Ecologie",vraag:"Wat is een producent in een ecosysteem?",opties:["Een dier dat andere dieren eet","Een organisme dat zonlicht gebruikt om organische stoffen te maken (fotosynthese)","Een afbreker van dood materiaal","Een parasiet"],correct:1,uitleg:"Producenten (planten, algen, cyanobacteriën) maken via fotosynthese organische stoffen uit CO₂ en water met behulp van lichtenergie."},
+  {thema:"Ecologie",vraag:"Hoeveel procent van de energie gaat gemiddeld door naar het volgende trofisch niveau?",opties:["50%","90%","10%","1%"],correct:2,uitleg:"Slechts ~10% van de energie wordt doorgegeven naar het volgende trofisch niveau. De rest gaat verloren als warmte via ademhaling."},
+  {thema:"Ecologie",vraag:"Wat is symbiose?",opties:["Concurrentie tussen soorten","Een langdurige interactie tussen twee soorten","Een roofdier-prooi relatie","Afbraak van dood materiaal"],correct:1,uitleg:"Symbiose is een langdurige interactie tussen twee soorten. Dit omvat mutualisme (+/+), commensalisme (+/0) en parasitisme (+/−)."},
+  {thema:"Ecologie",vraag:"Wat is mutualisme?",opties:["Beide soorten hebben nadeel","Één soort heeft voordeel, de ander niet","Beide soorten hebben voordeel van de relatie","Één soort parasiteert de ander"],correct:2,uitleg:"Mutualisme is een symbiose waarbij beide soorten voordeel hebben, zoals bijen en bloemen (bestuiving) of stikstofbacteriën en vlinderbloemigen."},
+  {thema:"Ecologie",vraag:"Wat is de niche van een organisme?",opties:["Zijn geografische locatie","De totale rol en positie van een organisme in zijn ecosysteem (wat het eet, wanneer, hoe)","Zijn populatiegrootte","Zijn voedselbron alleen"],correct:1,uitleg:"De niche omvat alle aspecten van hoe een organisme leeft: voedsel, habitat, tijdstip van activiteit, reproductie — zijn 'beroep' in het ecosysteem."},
+  {thema:"Ecologie",vraag:"Wat is primaire successie?",opties:["Herstel van een ecosysteem na brand","Kolonisatie van een gebied dat nooit eerder begroeid was (bijv. pas gestolde lava)","Successie in een meer","Verandering door klimaat"],correct:1,uitleg:"Primaire successie start op een kaal substraat zonder bodem (bijv. na vulkaanuitbarsting). Pioniersoorten bereiden de weg voor latere soorten."},
+  {thema:"Ecologie",vraag:"Wat is de koolstofkringloop?",opties:["De beweging van water door het ecosysteem","Het rondgaan van koolstof via fotosynthese, ademhaling, verbranding en decompostie","De stikstofcyclus","De energiestroom in een voedselweb"],correct:1,uitleg:"In de koolstofkringloop wordt CO₂ door producenten via fotosynthese vastgelegd, en vrijgegeven via ademhaling, verbranding en afbraak door decomponenten."},
+  {thema:"Ecologie",vraag:"Wat zijn decomponenten?",opties:["Dieren die planten eten","Organismen (bacteriën, schimmels) die dood organisch materiaal afbreken","Producenten","Toproofdieren"],correct:1,uitleg:"Decomponenten (bacteriën en schimmels) breken dood organisch materiaal af tot anorganische stoffen, die dan weer beschikbaar zijn voor producenten."},
+  {thema:"Ecologie",vraag:"Wat is biodiversiteit?",opties:["Aantal individuen in een populatie","De verscheidenheid aan soorten, genen en ecosystemen in een gebied","De biomassa van een ecosysteem","Het aantal trofische niveaus"],correct:1,uitleg:"Biodiversiteit omvat soortendiversiteit, genetische diversiteit en ecosysteemdiversiteit. Hoge biodiversiteit maakt ecosystemen veerkrachtiger."},
+  {thema:"Ecologie",vraag:"Wat is eutrofiëring?",opties:["Verzuring van de bodem","Overmatige toevoer van nutriënten (N, P) die leiden tot algenbloei en zuurstoftekort","Uitsterven van een soort","Klimaatverandering"],correct:1,uitleg:"Eutrofiëring: teveel stikstof/fosfor (uit landbouw) → algenbloei → algen sterven → bacteriën breken af en verbruiken O₂ → vissen sterven."},
+  {thema:"Ecologie",vraag:"Wat is het broeikaseffect?",opties:["Opwarming door de zon direct","Opwarming van de aarde doordat broeikasgassen (CO₂, CH₄) warmte vasthouden","Afkoeling door wolken","Een ecologisch evenwicht"],correct:1,uitleg:"Broeikasgassen (CO₂, CH₄, N₂O) laten zonnelicht door maar houden warmtestraling van de aarde vast, wat leidt tot opwarming."},
+  {thema:"Ecologie",vraag:"Wat is een populatie?",opties:["Alle organismen in een ecosysteem","Alle individuen van één soort in een bepaald gebied","Een groep roofdieren","Een voedselketen"],correct:1,uitleg:"Een populatie bestaat uit alle individuen van dezelfde soort die op hetzelfde moment in hetzelfde gebied leven en zich onderling kunnen voortplanten."},
+
+  // ═══════════════════════════════════════════
+  // CELLEN & STOFWISSELING
+  // ═══════════════════════════════════════════
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is de functie van mitochondriën?",opties:["Eiwitsynthese","Energieproductie via celademhaling (ATP)","Fotosynthese","Afbraak van afvalstoffen"],correct:1,uitleg:"Mitochondriën zijn de energiecentrales van de cel. Via celademhaling (oxidatieve fosforylering) produceren ze ATP uit glucose en zuurstof."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is de functie van ribosomen?",opties:["Energie produceren","Eiwitten synthetiseren","Lipiden opslaan","DNA repliceren"],correct:1,uitleg:"Ribosomen zijn de eiwitfabrieken van de cel. Ze lezen mRNA af en koppelen aminozuren aaneen tot eiwitten (translatie)."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is het verschil tussen een prokaryote en eukaryote cel?",opties:["Prokaryoten hebben een celkern; eukaryoten niet","Eukaryoten hebben een celkern met membraan; prokaryoten niet","Prokaryoten zijn groter","Eukaryoten hebben geen DNA"],correct:1,uitleg:"Prokaryoten (bacteriën) hebben geen omhuld celkern — hun DNA ligt vrij in het cytoplasma. Eukaryoten (dier, plant, schimmel) hebben wel een celkern."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is osmose?",opties:["Actief transport van ionen","Diffusie van water door een semipermeabel membraan van laag naar hoog concentratie opgeloste stof","Transport van glucose","Beweging van eiwitten"],correct:1,uitleg:"Osmose is de passieve beweging van water door een semipermeabel membraan van een gebied met lage opgeloste stof­concentratie naar hoog."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is actief transport?",opties:["Transport met de concentratiegradient mee zonder energie","Transport tegen de concentratiegradient in met behulp van ATP","Diffusie van water","Transport via osmose"],correct:1,uitleg:"Actief transport verplaatst stoffen tegen de concentratiegradient in. Dit kost energie (ATP) en vereist transporteiwitten (pompen) in het celmembraan."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is de bruto-reactievergelijking van fotosynthese?",opties:["C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + energie","6CO₂ + 6H₂O + lichtenergie → C₆H₁₂O₆ + 6O₂","CO₂ + H₂O → O₂","Glucose + O₂ → CO₂ + H₂O"],correct:1,uitleg:"Fotosynthese: 6CO₂ + 6H₂O + lichtenergie → C₆H₁₂O₆ + 6O₂. Planten leggen CO₂ vast en produceren glucose en zuurstof."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is aeroobe celademhaling?",opties:["Verbranding zonder zuurstof","Afbraak van glucose met zuurstof tot CO₂, H₂O en veel ATP","Fotosynthese in het donker","Gisting"],correct:1,uitleg:"Aeroobe celademhaling: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ~38 ATP. Vindt plaats in mitochondriën."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is anaeroobe ademhaling (gisting)?",opties:["Ademhaling met zuurstof","Afbraak van glucose zonder zuurstof met weinig ATP en melkzuur of ethanol","Fotosynthese","Actief transport"],correct:1,uitleg:"Anaeroob: glucose wordt afgebroken zonder O₂. Bij melkzuurgisting (spieren) ontstaat melkzuur + 2 ATP. Bij alcoholgisting (gist) ethanol + CO₂ + 2 ATP."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is de functie van het Golgi-apparaat?",opties:["DNA replicatie","Sorteren, modificeren en verpakken van eiwitten voor secretie of transport","Energieproductie","Fotosynthese"],correct:1,uitleg:"Het Golgi-apparaat verwerkt, sorteert en verpakt eiwitten (afkomstig van het ER) in blaasjes voor transport naar binnen of buiten de cel."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat doet een enzym?",opties:["Slaat energie op","Versnelt chemische reacties als biologische katalysator zonder zelf verbruikt te worden","Transporteert stoffen door membranen","Codeert voor genen"],correct:1,uitleg:"Enzymen zijn eiwitten die als biologische katalysatoren werken. Ze verlagen de activeringsenergie van een reactie en worden niet verbruikt."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is mitose?",opties:["Celdeling waarbij 4 haploïde cellen ontstaan","Celdeling waarbij 2 identieke diploïde dochtercellen ontstaan","Vorming van geslachtscellen","DNA-replicatie alleen"],correct:1,uitleg:"Mitose is de gewone celdeling: uit 1 moedercel ontstaan 2 genetisch identieke dochtercellen met hetzelfde chromosoomaantal (diploïd)."},
+  {thema:"Cellen & Stofwisseling",vraag:"In welk organel vindt fotosynthese plaats?",opties:["Mitochondrium","Ribosoom","Chloroplast","Vacuole"],correct:2,uitleg:"Fotosynthese vindt plaats in chloroplasten, specifiek in de thylakoid­membranen (lichtreacties) en het stroma (Calvin-cyclus)."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is diffusie?",opties:["Transport met energie van laag naar hoog","Passieve beweging van stoffen van hoog naar laag concentratie","Osmose van water","Actief transport"],correct:1,uitleg:"Diffusie is de spontane beweging van moleculen van een hoge naar een lage concentratie. Dit kost geen energie (passief transport)."},
+  {thema:"Cellen & Stofwisseling",vraag:"Welke fase van mitose worden chromosomen zichtbaar en gaan naar het midden van de cel?",opties:["Profase","Metafase","Anafase","Telofase"],correct:1,uitleg:"In de metafase worden de gecondenseerde chromosomen op de metafaseplaat (midden van de cel) gerangschikt door de spoeldraden."},
+  {thema:"Cellen & Stofwisseling",vraag:"Wat is de functie van lysosomen?",opties:["Eiwitsynthese","Energieproductie","Afbraak van afvalstoffen en celonderdelen via enzymen","Fotosynthese"],correct:2,uitleg:"Lysosomen bevatten hydrolytische enzymen en breken afval, beschadigde organellen en opgenomen materiaal af (fagocytose-producten)."},
+
+  // ═══════════════════════════════════════════
+  // VOORTPLANTING & ONTWIKKELING
+  // ═══════════════════════════════════════════
+  {thema:"Voortplanting",vraag:"Wat is het verschil tussen geslachtelijke en ongeslachtelijke voortplanting?",opties:["Ongeslachtelijk is sneller maar produceert genetisch identieke nakomelingen; geslachtelijk geeft variatie","Geslachtelijk is altijd sneller","Ongeslachtelijk vereist twee ouders","Geen verschil"],correct:0,uitleg:"Ongeslachtelijke voortplanting (bijv. splijting, budding) geeft genetisch identieke klonen. Geslachtelijk (fusie van gameten) geeft variatie door rekombinatie."},
+  {thema:"Voortplanting",vraag:"Wat is meiose?",opties:["Celgroei","Gewone celdeling","Reductiedeling waarbij 4 haploïde geslachtscellen ontstaan","DNA-reparatie"],correct:2,uitleg:"Meiose is een reductiedeling: het chromosoomaantal wordt gehalveerd. Uit 1 diploïde cel ontstaan 4 haploïde gameten (zaadcellen, eicellen)."},
+  {thema:"Voortplanting",vraag:"Hoe noemen we de versmelting van een zaadcel en eicel?",opties:["Meiose","Mitose","Bevruchting (fertilisatie)","Implantatie"],correct:2,uitleg:"Bevruchting is de versmelting van een haploïde zaadcel (n) en een haploïde eicel (n) tot een diploïde zygote (2n)."},
+  {thema:"Voortplanting",vraag:"Waar vindt de bevruchting normaal plaats bij mensen?",opties:["In de baarmoeder","In de eierstok","In de eileider","In de vagina"],correct:2,uitleg:"Bevruchting vindt normaal plaats in de eileider (tuba uterina). De bevruchte eicel (zygote) reist dan naar de baarmoeder voor innesteling."},
+  {thema:"Voortplanting",vraag:"Welk hormoon houdt de zwangerschap in stand in de eerste weken?",opties:["Oestrogeen","Progesteron","HCG (humaan choriongonadotrofine)","LH"],correct:2,uitleg:"HCG wordt geproduceerd door het embryo na innesteling en houdt het corpus luteum in stand, dat progesteron produceert om de zwangerschap te handhaven."},
+];
+
+const THEMAS = [...new Set(VRAGEN.map(v => v.thema))];
+const THEMA_ICONS = {"Bloed & Afweer":"🩸","DNA & Erfelijkheid":"🧬","Evolutie":"🦕","Regeling & Hormonen":"⚡","Ecologie":"🌿","Cellen & Stofwisseling":"🔬","Voortplanting":"🥚"};
+
+let currentQuestions = [], current = 0, score = 0, selectedThema = '';
+
+function shuffle(arr) {
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function buildHomeScreen() {
+  const grid = document.getElementById('themaGrid');
+  grid.innerHTML = '';
+  THEMAS.forEach(t => {
+    const count = VRAGEN.filter(v => v.thema === t).length;
+    const card = document.createElement('div');
+    card.className = 'thema-card';
+    card.innerHTML = `<div class="thema-icon">${THEMA_ICONS[t]||'📚'}</div><div class="thema-name">${t}</div><div class="thema-count">${count} vragen</div>`;
+    card.onclick = () => startQuiz(t);
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(thema) {
+  selectedThema = thema;
+  const pool = thema === 'Alles' ? VRAGEN : VRAGEN.filter(v => v.thema === thema);
+  currentQuestions = shuffle(pool).slice(0, 10);
+  current = 0; score = 0;
+  document.getElementById('homeScreen').style.display = 'none';
+  document.getElementById('scoreScreen').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = currentQuestions[current];
+  document.getElementById('progText').textContent = `${current+1} / ${currentQuestions.length}`;
+  document.getElementById('ptsBadge').textContent = `${score} pt`;
+  document.getElementById('progFill').style.width = `${((current+1)/currentQuestions.length)*100}%`;
+  document.getElementById('themaBadge').textContent = q.thema;
+  document.getElementById('vraagText').innerHTML = q.vraag;
+
+  const ans = document.getElementById('answers');
+  ans.innerHTML = '';
+  // Shuffle answer order
+  const indices = shuffle([0,1,2,3]);
+  const correctOptie = q.opties[q.correct];
+  indices.forEach(i => {
+    const btn = document.createElement('button');
+    btn.className = 'ans-btn';
+    btn.textContent = q.opties[i];
+    btn.onclick = () => selectAnswer(btn, q.opties[i] === correctOptie, q);
+    ans.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(btn, isCorrect, q) {
+  const btns = document.querySelectorAll('.ans-btn');
+  btns.forEach(b => {
+    b.disabled = true;
+    if(b.textContent === q.opties[q.correct]) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  if(isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('ptsBadge').textContent = `${score} pt`;
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! ' + q.uitleg;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Onjuist. ' + q.uitleg;
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.style.display = 'block';
+  nb.textContent = current < currentQuestions.length-1 ? 'Volgende →' : 'Resultaat bekijken';
+}
+
+function nextQuestion() {
+  current++;
+  if(current >= currentQuestions.length) showScore();
+  else loadQuestion();
+}
+
+function showScore() {
+  document.getElementById('quizArea').style.display = 'none';
+  const ss = document.getElementById('scoreScreen');
+  ss.style.display = 'block';
+  document.getElementById('scoreNum').textContent = score;
+  const pct = score/currentQuestions.length;
+  let title, desc;
+  if(pct >= 0.9){title='Uitstekend! 🎉';desc=`${score}/10 — Je bent er klaar voor!`;}
+  else if(pct >= 0.7){title='Goed gedaan! 👍';desc=`${score}/10 — Nog een kleine herhaling en je zit er helemaal op.`;}
+  else if(pct >= 0.5){title='Blijf oefenen 💪';desc=`${score}/10 — Bekijk je theorie nog eens en probeer opnieuw.`;}
+  else{title='Meer studeren 📚';desc=`${score}/10 — Lees je aantekeningen goed door en probeer het opnieuw!`;}
+  document.getElementById('scoreTitle').textContent = title;
+  document.getElementById('scoreDesc').textContent = desc;
+}
+
+function restartSame() { startQuiz(selectedThema); }
+function goHome() {
+  document.getElementById('scoreScreen').style.display = 'none';
+  document.getElementById('homeScreen').style.display = 'block';
+}
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  document.getElementById('themeBtn').textContent = document.body.classList.contains('light') ? 'Donker' : 'Licht';
+}
+
+buildHomeScreen();
+</script>
+</body>
+</html>
